@@ -1,0 +1,57 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.4'
+	id 'io.spring.dependency-management' version '1.1.6'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	// jpa
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	// mysql
+	implementation 'mysql:mysql-connector-java:8.0.34'
+	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
+	// lombok
+	implementation 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	testImplementation 'org.projectlombok:lombok:1.18.24'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.24'
+	// security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// Spring Boot Starter Test for testing
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// Mockito for mocking
+	testImplementation 'org.mockito:mockito-core'
+
+	// AssertJ for fluent assertions
+	testImplementation 'org.assertj:assertj-core'
+
+	// JSON Web Token (JWT)
+	implementation 'io.jsonwebtoken:jjwt-api:1.0.10'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
