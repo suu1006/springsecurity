@@ -10,58 +10,41 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 import service.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    // 시큐리티 필터 메서드
+    private final JwtTokenProvider jwtTokenProvider;
+
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public BCryptPasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
 
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .authorizeHttpRequests((auth) -> auth
-                        // 인가 동작 순서 : 위에서 부터 아래로 순서대로 ! 따라서 순서 유의 (anyRequest 특히)
-
-                        .requestMatchers("/", "/login", "/join").permitAll()
-                        .requestMatchers("/admin").hasRole(Role.ADMIN.name())
-                        // ** : 와일드카드
-                        .requestMatchers("/my/**").hasAnyRole(Role.ADMIN.name(), Role.USER.name())
-                        .anyRequest().authenticated()
-                );
-
-        // 로그인 설정
-        http
-                .formLogin((auth) -> auth.loginPage("/login")
-                        .loginProcessingUrl("/loginProc")
-                        .permitAll()
-                );
-
-        // 로그아웃 URL 설정
-        http
-                .logout((auth) -> auth
-                        .logoutUrl("/logout")
-                );
-
-
-
-        // csrf : 사이트 위변조 방지 설정 (스프링 시큐리티에는 자동으로 설정 되어 있음)
-        // csrf기능 켜져있으면 post 요청을 보낼때 csrf 토큰도 보내줘야 로그인 진행됨 !
-        // 개발단계에서만 csrf 잠시 꺼두기
-        http
-                .csrf((auth) -> auth.disable());
-
+                .csrf(csrf -> csrf.disable())  // 변경된 방식으로 CSRF 비활성화
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션을 사용하지 않음
+                .formLogin(form -> form.disable())  // 폼 기반 로그인 비활성화
+                .httpBasic(httpBasic -> httpBasic.disable())  // HTTP 기본 인증 비활성화
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/login").permitAll()  // "/api/login" 경로는 인증 없이 접근 허용
+                )
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class); // JWT 필터 추가
         return http.build();
     }
 
-    // BCrypt password encoder를 리턴하는 메서드
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder(){
-
-        return new BCryptPasswordEncoder();
-    }
 }
