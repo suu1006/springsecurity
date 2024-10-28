@@ -4,20 +4,24 @@ import entity.User;
 import exception.UserNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import repository.UserRepository;
 
-import javax.swing.text.html.Option;
-import java.util.Optional;
+import java.util.Collections;
 
 @Service
 public class UserService {
 
     public UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     /**
@@ -31,21 +35,25 @@ public class UserService {
 
     /**
      * 유저 조회 (이메일)
+     *
      * @param email
      * @return
      */
-    public Optional<User> findUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public UserDetails findUserByEmail(String email) {
+        // return userRepository.findByEmail(email);
+        return userRepository.findByEmail(email)
+                .map(this::createUserDetails)
+                .orElseThrow(() -> new UsernameNotFoundException("해당하는 회원을 찾을 수 없습니다."));
     }
 
-    /***
-     * 유저 조회 (id)
-     * @param id
-     * @return
-     */
-    public Optional<User> findUserById(Long id) {
-        return userRepository.findById(id);
+    private UserDetails createUserDetails(User user) {
+        return User.builder()
+                .email(user.getEmail())
+                .password(passwordEncoder.encode(user.getPassword()))
+                .roles(Collections.singletonList(user.getRole()))
+                .build();
     }
+
 
     /**
      * 유저 정보 수정

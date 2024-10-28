@@ -25,8 +25,8 @@ dependencies {
 	// jpa
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	// mysql
-	implementation 'mysql:mysql-connector-java:8.0.34'
-	implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.29'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	implementation 'com.mysql:mysql-connector-j'
 	// lombok
 	implementation 'org.projectlombok:lombok:1.18.24'
 	annotationProcessor 'org.projectlombok:lombok:1.18.24'

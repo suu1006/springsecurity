@@ -24,20 +24,12 @@ public class UserController {
     }
 
     // 이메일로 유저 조회
-    @GetMapping(value = "/email/{email}")
-    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
-        return userService.findUserByEmail(email)
-                .map(user -> ResponseEntity.ok().body(user))
-                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
-    }
-
-    // 유저 조회
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<User> findUserById(@PathVariable Long id) {
-        return userService.findUserById(id)
-                .map(user -> ResponseEntity.ok().body(user))
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
-    }
+//    @PostMapping(value = "/get/email")
+//    public ResponseEntity<User> getUserByEmail(@PathVariable String email) {
+//        return userService.findUserByEmail(email)
+//                .map(ResponseEntity::ok)
+//                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+//    }
 
     // 유저 정보 수정
     @PutMapping(value = "/{id}")

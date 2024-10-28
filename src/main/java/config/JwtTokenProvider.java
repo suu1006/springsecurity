@@ -32,6 +32,7 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(secretByteKey); // Jwt 서명 시 사용
     }
 
+    // Access Token, Refresh Token 생성
     public JwtToken generateToken(Authentication authentication) { // 토큰 생성
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -58,8 +59,8 @@ public class JwtTokenProvider {
                 .build();
     }
 
+    // access token 복호화
     public Authentication getAuthentication(String accessToken) {
-        //토큰 복호화
         Claims claims = parseClaims(accessToken);
 
         if (claims.get("auth") == null) {
@@ -72,12 +73,13 @@ public class JwtTokenProvider {
                         .collect(Collectors.toList());
 
         UserDetails principal = new User(claims.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        return new UsernamePasswordAuthenticationToken(principal, "", authorities); // 주체와 권한 정보를 포함한 인증 객체 생성
     }
 
+    // 토큰 정보 검증 - 유효성 확인
     public boolean validateToken(String token) {
         try {
-            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token); // jwt토큰의 검증과 파싱을 모두 수행
             return true;
         }catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e); // 토큰 서명 잘못됨.
@@ -91,9 +93,14 @@ public class JwtTokenProvider {
         return false;
     }
 
+    // accessToken
     private Claims parseClaims(String accessToken) {
         try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
+            return Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(accessToken)
+                    .getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
