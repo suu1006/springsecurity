@@ -1,16 +1,15 @@
-package service;
+package com.example.javamvc.service;
 
-import config.JwtTokenProvider;
-import entity.JwtToken;
-import entity.User;
+import com.example.javamvc.config.JwtTokenProvider;
+import com.example.javamvc.domain.JwtToken;
+import com.example.javamvc.domain.User;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import repository.LoginRepository;
-import repository.UserRepository;
+import com.example.javamvc.repository.UserRepository;
 
 import java.util.Optional;
 
@@ -18,11 +17,11 @@ import java.util.Optional;
 public class LoginService {
 
     private final BCryptPasswordEncoder encoder;
-    private final LoginRepository repository;
+    private final UserRepository repository;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public LoginService(BCryptPasswordEncoder encoder, LoginRepository repository, AuthenticationManagerBuilder authenticationManagerBuilder, JwtTokenProvider jwtTokenProvider) {
+    public LoginService(BCryptPasswordEncoder encoder, UserRepository repository, AuthenticationManagerBuilder authenticationManagerBuilder, JwtTokenProvider jwtTokenProvider) {
         this.encoder = encoder;
         this.repository = repository;
         this.authenticationManagerBuilder = authenticationManagerBuilder;

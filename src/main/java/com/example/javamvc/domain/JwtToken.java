@@ -1,4 +1,4 @@
-package entity;
+package com.example.javamvc.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

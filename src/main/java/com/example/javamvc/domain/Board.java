@@ -1,9 +1,7 @@
-package entity;
+package com.example.javamvc.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
 

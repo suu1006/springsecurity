@@ -1,14 +1,14 @@
-package service;
+package com.example.javamvc.service;
 
-import entity.User;
-import exception.UserNotFoundException;
+import com.example.javamvc.domain.User;
+import com.example.javamvc.exception.UserNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import repository.UserRepository;
+import com.example.javamvc.repository.UserRepository;
 
 import java.util.Collections;
 
@@ -39,19 +39,10 @@ public class UserService {
      * @param email
      * @return
      */
-    public UserDetails findUserByEmail(String email) {
+    public User findUserByEmail(String email) {
         // return userRepository.findByEmail(email);
         return userRepository.findByEmail(email)
-                .map(this::createUserDetails)
-                .orElseThrow(() -> new UsernameNotFoundException("해당하는 회원을 찾을 수 없습니다."));
-    }
-
-    private UserDetails createUserDetails(User user) {
-        return User.builder()
-                .email(user.getEmail())
-                .password(passwordEncoder.encode(user.getPassword()))
-                .roles(Collections.singletonList(user.getRole()))
-                .build();
+                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
     }
 
 

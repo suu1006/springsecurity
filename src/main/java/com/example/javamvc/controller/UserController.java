@@ -1,20 +1,18 @@
-package controller;
+package com.example.javamvc.controller;
 
-import entity.User;
-import exception.UserNotFoundException;
+import com.example.javamvc.domain.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.UserService;
+import com.example.javamvc.service.UserService;
 
-import java.util.Optional;
-
+@RequiredArgsConstructor // 주입하는 생성자 자동 생성
 @RestController
 @RequestMapping(value = "/user")
 public class UserController {
 
-    @Autowired
-    UserService userService;
+    private final UserService userService;
 
     // 유저 저장
     @PostMapping(value = "/save")

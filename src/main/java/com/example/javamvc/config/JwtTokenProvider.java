@@ -1,6 +1,6 @@
-package config;
+package com.example.javamvc.config;
 
-import entity.JwtToken;
+import com.example.javamvc.domain.JwtToken;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -13,23 +13,20 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.security.core.GrantedAuthority;
 import java.security.Key;
-import java.security.Key;
-import java.security.SignatureException;
 import java.util.*;
 import java.util.stream.Collectors;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
     private final Key key;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) { // 비밀키
-        log.info("secretKey : {}", secretKey);
-        byte[] secretByteKey = Base64.getDecoder().decode(secretKey); // 디코딩해서 byte 배열로 변환
-        this.key = Keys.hmacShaKeyFor(secretByteKey); // Jwt 서명 시 사용
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+        System.out.println("Injected secretKey: " + secretKey); // 확인용
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+        this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     // Access Token, Refresh Token 생성
